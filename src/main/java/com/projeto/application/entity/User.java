@@ -1,8 +1,16 @@
 package com.projeto.application.entity;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
+@JsonPropertyOrder(
+        {"userId"}
+)
 @Table(name = "tb_users")
 public class User {
 
@@ -18,6 +26,12 @@ public class User {
 
     @Column(name = "password")
     private String password;
+
+    @CreationTimestamp
+    private LocalDateTime creationTimestamp;
+
+    @UpdateTimestamp
+    private LocalDateTime updateTimestamp;
 
     public User() {
     }
@@ -58,5 +72,21 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public LocalDateTime getCreationTimestamp() {
+        return creationTimestamp;
+    }
+
+    public void setCreationTimestamp(LocalDateTime creationTimestamp) {
+        this.creationTimestamp = creationTimestamp;
+    }
+
+    public LocalDateTime getUpdateTimestamp() {
+        return updateTimestamp;
+    }
+
+    public void setUpdateTimestamp(LocalDateTime updateTimestamp) {
+        this.updateTimestamp = updateTimestamp;
     }
 }

@@ -1,11 +1,14 @@
 package com.projeto.application.controller;
 
 import com.projeto.application.dto.post.UserPostDto;
+import com.projeto.application.dto.put.UserPutDto;
 import com.projeto.application.dto.response.UserResponseDto;
 import com.projeto.application.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -20,16 +23,37 @@ public class UserController {
 
     // Método utilizado para criar um usuário na API. É retornado uma DTO do usuário.
     @PostMapping("/create")
-    public ResponseEntity<UserResponseDto> createUser(@RequestBody UserPostDto userPostDto){
-        UserResponseDto responseUserDto = userService.createUser(userPostDto);
-        return ResponseEntity.ok(responseUserDto);
+    public ResponseEntity<String> createUser(@RequestBody UserPostDto userPostDto){
+        UserResponseDto user = userService.createUser(userPostDto);
+        ServletUriComponentsBuilder servletUriComponentsBuilder = ServletUriComponentsBuilder.fromCurrentRequest();
+        servletUriComponentsBuilder.path("/{userId}");
+        URI uri = servletUriComponentsBuilder.build(user.userId());
+        return ResponseEntity.created(uri).body("Seu cadastro foi criado com sucesso!");
     }
 
-
+    // Método que retorna todos os usuários cadastrados na API. Retorna uma lista de DTO.
     @GetMapping
     public ResponseEntity<List<UserResponseDto>> getAllRegisteredUsers(){
         List<UserResponseDto> userList = userService.getAllRegisteredUsers();
         return ResponseEntity.ok(userList);
     }
-    
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long userId){
+        UserResponseDto userById = userService.getUserById(userId);
+        return ResponseEntity.ok(userById);
+    }
+
+    @PutMapping("/update/{userId}")
+    public ResponseEntity<Void> updateUsernameAndPassword(
+            @RequestBody UserPutDto userPutDto, @PathVariable Long userId){
+        userService.updateUsernameAndPassword(userPutDto, userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/delete/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
+        userService.deleteUserById(userId);
+        return ResponseEntity.noContent().build();
+    }
 }
