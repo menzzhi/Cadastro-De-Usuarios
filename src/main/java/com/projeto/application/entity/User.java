@@ -2,15 +2,14 @@ package com.projeto.application.entity;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
-@JsonPropertyOrder(
-        {"userId"}
-)
+@JsonPropertyOrder({"userId"})
 @Table(name = "tb_users")
 public class User {
 
@@ -21,6 +20,7 @@ public class User {
     @Column(name = "username")
     private String username;
 
+    @Email
     @Column(name = "email")
     private String email;
 

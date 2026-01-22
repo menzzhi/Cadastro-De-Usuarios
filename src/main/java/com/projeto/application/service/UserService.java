@@ -5,6 +5,7 @@ import com.projeto.application.dto.put.UserPutDto;
 import com.projeto.application.dto.response.UserResponseDto;
 import com.projeto.application.entity.User;
 import com.projeto.application.repository.UserRepository;
+import jakarta.transaction.TransactionalException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -38,11 +39,15 @@ public class UserService {
             throw new RuntimeException("Esse nome de usuário já está cadastrado.");
         }
 
-        User createdUser = new User(userPostDto.username(), userPostDto.email(), userPostDto.password());// É criado uma variável da classe User
-        User savedUser = userRepository.save(createdUser);                                                // no qual é utilizado para ser salva dentro do repositório
+        try{
+            User createdUser = new User(userPostDto.username(), userPostDto.email(), userPostDto.password());// É criado uma variável da classe User
+            User savedUser = userRepository.save(createdUser);                                                // no qual é utilizado para ser salva dentro do repositório
+            return new UserResponseDto(
+                    savedUser.getUserId(), savedUser.getUsername(), savedUser.getEmail());
+        } catch (TransactionalException transactionalException){
+            throw new TransactionalException("E-mail está inválido", transactionalException);
+        }
 
-        return new UserResponseDto(
-                savedUser.getUserId(), savedUser.getUsername(), savedUser.getEmail());
     }
 
     public List<UserResponseDto> getAllRegisteredUsers() {
