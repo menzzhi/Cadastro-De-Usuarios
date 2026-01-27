@@ -38,22 +38,25 @@ public class UserController {
         return ResponseEntity.ok(userList);
     }
 
+    // Método criado para retornar a DTO de um usuário específico, através do ID dele.
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long userId){
         UserResponseDto userById = userService.getUserById(userId);
         return ResponseEntity.ok(userById);
     }
 
+    // Método criado para que o usuário retorne algumas informações do próprio cadastro, utilizando o e-mail e senha dele
+    @GetMapping("/data")
+    public ResponseEntity<UserResponseDto> getYourData(@RequestParam String email, @RequestParam String password){
+        UserResponseDto yourUserdata = userService.getYourUserdata(email, password);
+        return ResponseEntity.ok(yourUserdata);
+    }
+
+    // Método que atualiza o nome e senha do usuário.
     @PutMapping("/update/{userId}")
     public ResponseEntity<Void> updateUsernameAndPassword(
             @RequestBody UserPutDto userPutDto, @PathVariable Long userId){
         userService.updateUsernameAndPassword(userPutDto, userId);
-        return ResponseEntity.noContent().build();
-    }
-
-    @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
-        userService.deleteUserById(userId);
         return ResponseEntity.noContent().build();
     }
 }

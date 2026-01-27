@@ -3,9 +3,7 @@ package com.projeto.application.controller;
 import com.projeto.application.entity.User;
 import com.projeto.application.service.AdminService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,5 +20,11 @@ public class AdminController {
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers(){
         return ResponseEntity.ok(adminService.getAllUsers());
+    }
+
+    @DeleteMapping("/delete/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
+        adminService.deleteUserById(userId);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -73,10 +73,14 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void deleteUserById(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    public UserResponseDto getYourUserdata(String email, String password) {
 
-        userRepository.delete(user);
+        if (userRepository.findAll().stream().anyMatch(u -> u.getEmail().equals(email)) &&
+                userRepository.findAll().stream().anyMatch(u -> u.getEmail().equals(email))){
+            User user = userRepository.findByEmail(email);
+            return new UserResponseDto(user.getUserId(), user.getUsername(), user.getEmail());
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 }
