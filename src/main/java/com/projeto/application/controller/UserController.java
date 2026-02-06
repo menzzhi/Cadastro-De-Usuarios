@@ -22,7 +22,7 @@ public class UserController {
     }
 
     // Método utilizado para criar um usuário na API. É retornado uma DTO do usuário.
-    @PostMapping("/create")
+    @PostMapping("/register")
     public ResponseEntity<String> createUser(@RequestBody UserPostDto userPostDto){
         UserResponseDto user = userService.createUser(userPostDto);
         ServletUriComponentsBuilder servletUriComponentsBuilder = ServletUriComponentsBuilder.fromCurrentRequest();

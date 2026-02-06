@@ -7,6 +7,7 @@ import com.projeto.application.entity.User;
 import com.projeto.application.repository.UserRepository;
 import jakarta.transaction.TransactionalException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -17,8 +18,11 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UserResponseDto createUser(UserPostDto userPostDto) {
@@ -41,7 +45,8 @@ public class UserService {
 
         try{
             User createdUser = new User(userPostDto.username(), userPostDto.email(), userPostDto.password());// É criado uma variável da classe User
-            User savedUser = userRepository.save(createdUser);                                                // no qual é utilizado para ser salva dentro do repositório
+            createdUser.setPassword(passwordEncoder.encode(userPostDto.password()));                         // no qual é utilizado para ser salva dentro do repositório
+            User savedUser = userRepository.save(createdUser);
             return new UserResponseDto(
                     savedUser.getUserId(), savedUser.getUsername(), savedUser.getEmail());
         } catch (TransactionalException transactionalException){
@@ -76,7 +81,7 @@ public class UserService {
     public UserResponseDto getYourUserdata(String email, String password) {
 
         if (userRepository.findAll().stream().anyMatch(u -> u.getEmail().equals(email)) &&
-                userRepository.findAll().stream().anyMatch(u -> u.getEmail().equals(email))){
+                userRepository.findAll().stream().anyMatch(u -> u.getPassword().equals(password))){
             User user = userRepository.findByEmail(email);
             return new UserResponseDto(user.getUserId(), user.getUsername(), user.getEmail());
         } else {
